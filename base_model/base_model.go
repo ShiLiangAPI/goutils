@@ -9,15 +9,15 @@ import (
 
 type BaseModel struct {
 	ID        string                `gorm:"<-:create;primaryKey" json:"id"`
-	CreatedAt *LocalTime            `gorm:"comment:'创建时间'" json:"created_at"`
-	UpdatedAt *LocalTime            `gorm:"comment:'修改时间'" json:"updated_at"`
+	CreatedAt *LocalTime            `gorm:"comment:'创建时间'" json:"createdAt"`
+	UpdatedAt *LocalTime            `gorm:"comment:'修改时间'" json:"updatedAt"`
 	DeletedAt soft_delete.DeletedAt `gorm:"<-:create;index" json:"-"`
 }
 
 type Model struct {
 	ID        string     `gorm:"<-:create;primaryKey" json:"id"`
-	CreatedAt *LocalTime `json:"created_at"`
-	UpdatedAt *LocalTime `json:"updated_at"`
+	CreatedAt *LocalTime `gorm:"comment:'创建时间'" json:"createdAt"`
+	UpdatedAt *LocalTime `gorm:"comment:'修改时间'" json:"updatedAt"`
 }
 
 func (obj *BaseModel) BeforeCreate(tx *gorm.DB) (err error) {
