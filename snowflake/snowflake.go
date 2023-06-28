@@ -45,9 +45,9 @@ func NewIDGenerator(workerId, dataCenterId int64) (*IDGenerator, error) {
 	}, nil
 }
 
-func GetNextID() int64 {
+func GetNextID(workerId, dataCenterId int64) int64 {
 
-	g, _ := NewIDGenerator(1, 1)
+	g, _ := NewIDGenerator(workerId, dataCenterId)
 
 	g.lock.Lock()
 	defer g.lock.Unlock()
