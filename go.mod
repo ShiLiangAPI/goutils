@@ -1,4 +1,4 @@
-module github.com/ShiLiangAPI/goutils
+module gitee.com/ShiLiangAPI/goutils
 
 go 1.19
 
