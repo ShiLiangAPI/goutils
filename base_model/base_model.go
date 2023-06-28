@@ -1,9 +1,9 @@
 package base_model
 
 import (
+	"github.com/ShiLiangAPI/goutils/snowflake"
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
-	"goutils/snowflake"
 )
 
 type BaseModel struct {
