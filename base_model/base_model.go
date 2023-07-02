@@ -8,14 +8,14 @@ import (
 )
 
 type BaseModel struct {
-	ID        string                `gorm:"<-:create;type:varchar(255);primaryKey" json:"id"`
+	ID        string                `gorm:"<-:create;type:bigint;primaryKey" json:"id"`
 	CreatedAt *LocalTime            `gorm:"comment:'创建时间'" json:"createdAt"`
 	UpdatedAt *LocalTime            `gorm:"comment:'修改时间'" json:"updatedAt"`
 	DeletedAt soft_delete.DeletedAt `gorm:"<-:create;index" json:"-"`
 }
 
 type Model struct {
-	ID        string     `gorm:"<-:create;type:varchar(255);primaryKey" json:"id"`
+	ID        string     `gorm:"<-:create;type:bigint;primaryKey" json:"id"`
 	CreatedAt *LocalTime `gorm:"comment:'创建时间'" json:"createdAt"`
 	UpdatedAt *LocalTime `gorm:"comment:'修改时间'" json:"updatedAt"`
 }
