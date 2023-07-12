@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 )
 
-type SliceInt64Json []string
+type SliceInt64Json []int64
 
 func (obj *SliceInt64Json) Scan(value interface{}) error {
 	bytesValue, _ := value.([]byte)
