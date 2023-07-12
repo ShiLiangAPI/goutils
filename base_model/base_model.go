@@ -21,13 +21,13 @@ type Model struct {
 }
 
 func (obj *BaseModel) BeforeCreate(tx *gorm.DB) (err error) {
-	obj.ID = strconv.FormatInt(snowflake.GetNextID(1, 1), 10)
+	obj.ID = strconv.FormatInt(snowflake.GetFlake(1, 1).GetNextID(), 10)
 
 	return
 }
 
 func (obj *Model) BeforeCreate(tx *gorm.DB) (err error) {
-	obj.ID = strconv.FormatInt(snowflake.GetNextID(1, 1), 10)
+	obj.ID = strconv.FormatInt(snowflake.GetFlake(1, 1).GetNextID(), 10)
 
 	return
 }
