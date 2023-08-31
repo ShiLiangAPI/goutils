@@ -9,9 +9,9 @@ func GetCurrentTimeStr() string {
 }
 
 // GetCurrentTimeUnix 获取当前时间戳
-//func GetCurrentTimeUnix() int64 {
-//	return time.Now().Unix()
-//}
+func GetCurrentTimeUnix() int64 {
+	return time.Now().Unix()
+}
 
 func ParseDateStrToLocTime(timeStr string) time.Time {
 	loc, err := time.LoadLocation("Asia/Shanghai")
