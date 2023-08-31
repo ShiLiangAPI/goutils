@@ -16,7 +16,7 @@ func Distinct[T comparable](el []T) []T {
 }
 
 // Different 差集 => 留下 el1 中不同的值
-func Different[T comparable](el1 []T, el2 []T) []T {
+func Different[T comparable](el1, el2 []T) []T {
 	var result []T
 	temp := map[T]struct{}{}
 
@@ -36,7 +36,7 @@ func Different[T comparable](el1 []T, el2 []T) []T {
 }
 
 // Intersection 交集
-func Intersection[T comparable](el1 []T, el2 []T) []T {
+func Intersection[T comparable](el1, el2 []T) []T {
 	var result []T
 	temp := map[T]struct{}{}
 

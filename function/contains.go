@@ -13,7 +13,7 @@ func ValueInSlice[T comparable](list []T, val T) bool {
 }
 
 // SliceInSlice list为基础数据(全)，valList为校验数组(部分)
-func SliceInSlice[T comparable](list []T, valList []T) (resMap map[T]bool) {
+func SliceInSlice[T comparable](list []T, valList []T) bool {
 
 	temp := map[T]struct{}{}
 
@@ -23,10 +23,12 @@ func SliceInSlice[T comparable](list []T, valList []T) (resMap map[T]bool) {
 
 	for _, tv := range valList {
 		_, ok := temp[tv]
-		resMap[tv] = ok
+		if !ok {
+			return false
+		}
 	}
 
-	return resMap
+	return true
 }
 
 type SliceContains[T comparable] struct {

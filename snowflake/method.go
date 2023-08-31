@@ -1,27 +1,9 @@
 package snowflake
 
 import (
-	"errors"
 	"strconv"
-	"sync"
 	"time"
 )
-
-func NewIDGenerator(workerId, dataCenterId int64) *IDGenerator {
-	if workerId > ((1<<workerIdBits)-1) || workerId < 0 {
-		panic(errors.New("worker id error"))
-	}
-
-	if dataCenterId > ((1<<dataCenterIdBits)-1) || dataCenterId < 0 {
-		panic(errors.New("data center id error"))
-	}
-
-	return &IDGenerator{
-		workerId:     workerId,
-		dataCenterId: dataCenterId,
-		lock:         &sync.Mutex{},
-	}
-}
 
 func (g *IDGenerator) GetNextID() int64 {
 

@@ -1,9 +1,5 @@
 package snowflake
 
-import (
-	"sync"
-)
-
 const (
 	workerIdBits     = 5
 	dataCenterIdBits = 5
@@ -18,20 +14,11 @@ const (
 	twepoch = int64(1597075200000)
 )
 
-type IDGenerator struct {
-	workerId     int64
-	dataCenterId int64
-	sequence     int64
-	timestamp    int64
-
-	lock *sync.Mutex
-}
-
 var flake *IDGenerator
 
-func GetFlake(WorkerId, DataCenterId int64) *IDGenerator {
+func GetFlake() *IDGenerator {
 	if flake == nil {
-		flake = NewIDGenerator(WorkerId, DataCenterId)
+		panic("Please run the InitFlake method first")
 	}
 
 	return flake
