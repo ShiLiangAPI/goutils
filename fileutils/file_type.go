@@ -1,6 +1,6 @@
 package fileutils
 
-import "gitee.com/ShiLiangAPI/goutils/function"
+import "github.com/ShiLiangAPI/goutils/function"
 
 func GetContentTypeBySuffix(suffix string) string {
 	imgList := []string{"jpeg", "jpg", "png", "gif", "tif", "bmp", "dwg"}

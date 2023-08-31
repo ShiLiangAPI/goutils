@@ -1,8 +1,8 @@
 package base_model
 
 import (
-	"gitee.com/ShiLiangAPI/goutils/snowflake"
-	"gitee.com/ShiLiangAPI/goutils/types"
+	"github.com/ShiLiangAPI/goutils/snowflake"
+	"github.com/ShiLiangAPI/goutils/types"
 	"gorm.io/gorm"
 	"strconv"
 )
