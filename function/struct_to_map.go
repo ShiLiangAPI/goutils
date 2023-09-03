@@ -5,15 +5,10 @@ import (
 	"strings"
 )
 
-type IStruct interface {
-	GetStructData() interface{}
-}
-
 // StructToMap 使用反射实现，完美地兼容了json标签的处理
-func StructToMap(st IStruct) map[string]interface{} {
+func StructToMap(st any) map[string]interface{} {
 	m := make(map[string]interface{})
-	in := st.GetStructData()
-	val := reflect.ValueOf(in)
+	val := reflect.ValueOf(st)
 	if val.Kind() == reflect.Ptr {
 		val = val.Elem()
 	}
