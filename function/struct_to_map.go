@@ -36,7 +36,7 @@ func StructToMap(st any) map[string]interface{} {
 	return m
 }
 
-// StructToFilterMap 使用反射实现，完美地兼容了field标签的处理
+// StructToFilterMap 使用反射实现，完美地兼容了filter标签的处理
 func StructToFilterMap(st any) map[string]interface{} {
 	m := make(map[string]interface{})
 	val := reflect.ValueOf(st)
