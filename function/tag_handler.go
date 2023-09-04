@@ -1,6 +1,7 @@
 package function
 
 import (
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"reflect"
 	"strings"
@@ -65,3 +66,48 @@ func GetStructMsg(err error, obj any) string {
 //
 //	return ""
 //}
+
+// StructToFilterSlice 使用反射实现，完美地兼容了filter标签的处理
+func StructToFilterSlice(st any) []string {
+	var s []string
+	val := reflect.ValueOf(st)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+	if val.Kind() != reflect.Struct {
+		return s
+	}
+
+	relType := val.Type()
+	for i := 0; i < relType.NumField(); i++ {
+		name := relType.Field(i).Name
+		tag := relType.Field(i).Tag.Get("form")
+		filter := strings.ToUpper(relType.Field(i).Tag.Get("filter"))
+		if val.Field(i).IsZero() {
+			continue
+		}
+		value := val.Field(i).Interface()
+		if tag != "" {
+			index := strings.Index(tag, ",")
+			if index == -1 {
+				name = tag
+			} else {
+				name = tag[:index]
+			}
+		}
+		switch filter {
+		case "":
+			name += fmt.Sprintf(" = %v", value)
+		case "LIKE":
+			name += fmt.Sprintf(" LIKE '%%%v%%'", value)
+		case "LLIKE":
+			name += fmt.Sprintf(" LIKE '%%%v'", value)
+		case "RLIKE":
+			name += fmt.Sprintf(" LIKE '%v%%'", value)
+		default:
+			name += fmt.Sprintf(" %s %v", filter, value)
+		}
+		s = append(s, name)
+	}
+	return s
+}
