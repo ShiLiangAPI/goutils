@@ -80,19 +80,24 @@ func StructToFilterSlice(st any) []string {
 
 	relType := val.Type()
 	for i := 0; i < relType.NumField(); i++ {
-		name := relType.Field(i).Name
-		tag := relType.Field(i).Tag.Get("form")
-		filter := strings.ToUpper(relType.Field(i).Tag.Get("filter"))
 		if val.Field(i).IsZero() {
 			continue
 		}
+		name := relType.Field(i).Name
+		tag := relType.Field(i).Tag
+		field := tag.Get("field")
+		if tag == "" {
+			field = tag.Get("form")
+		}
+		filter := strings.ToUpper(relType.Field(i).Tag.Get("filter"))
+
 		value := val.Field(i).Interface()
 		if tag != "" {
-			index := strings.Index(tag, ",")
+			index := strings.Index(field, ",")
 			if index == -1 {
-				name = tag
+				name = field
 			} else {
-				name = tag[:index]
+				name = field[:index]
 			}
 		}
 		switch filter {
