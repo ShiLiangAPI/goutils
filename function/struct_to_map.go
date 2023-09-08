@@ -31,7 +31,11 @@ func StructToMap(st any) map[string]interface{} {
 				name = tag[:index]
 			}
 		}
-		m[name] = val.Field(i).Interface()
+		if val.Field(i).IsZero() {
+			m[name] = nil
+		} else {
+			m[name] = val.Field(i).Interface()
+		}
 	}
 	return m
 }
