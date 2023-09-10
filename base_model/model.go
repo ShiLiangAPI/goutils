@@ -15,6 +15,6 @@ type Model struct {
 
 func (obj *Model) BeforeCreate(tx *gorm.DB) (err error) {
 	obj.ID = strconv.FormatInt(snowflake.GetFlake().GetNextID(), 10)
-
+	tx.Statement.SetColumn("ID", obj.ID)
 	return
 }
