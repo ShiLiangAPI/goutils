@@ -5,6 +5,8 @@ type PwdUtil struct {
 	iterations int
 }
 
+var pwdUtil *PwdUtil
+
 func NewPwdUtil(salt string, iterations int) *PwdUtil {
 	// 根据项目替换，值越大加密时间越长
 	if iterations == 0 {
@@ -16,6 +18,14 @@ func NewPwdUtil(salt string, iterations int) *PwdUtil {
 			salt:       salt,
 			iterations: iterations,
 		}
+	}
+
+	return pwdUtil
+}
+
+func GetPwdUtil() *PwdUtil {
+	if pwdUtil == nil {
+		panic("Please run the InitFlake method first")
 	}
 
 	return pwdUtil

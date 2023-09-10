@@ -23,14 +23,21 @@ func GetStructMsg(err error, obj any) string {
 					if strings.Contains(msg, ";") {
 						msgList := strings.Split(msg, ";")
 						for _, msgValue := range msgList {
-							keyValueList := strings.SplitN(msgValue, ":", 1)
-							if keyValueList[0] == e.Tag() {
+							keyValueList := strings.SplitN(msgValue, ":", 2)
+							if strings.Contains(keyValueList[0], ",") {
+								keyList := strings.SplitN(keyValueList[0], ",", 2)
+								for _, key := range keyList {
+									if key == e.Tag() {
+										return keyValueList[1]
+									}
+								}
+							} else if keyValueList[0] == e.Tag() {
 								return keyValueList[1]
 							}
 						}
 					} else {
 						if strings.Contains(msg, ":") {
-							keyValueList := strings.SplitN(msg, ":", 1)
+							keyValueList := strings.SplitN(msg, ":", 2)
 							return keyValueList[1]
 						}
 						return msg
@@ -40,7 +47,7 @@ func GetStructMsg(err error, obj any) string {
 				if gorm != "" {
 					gormMsgList := strings.Split(gorm, ";")
 					for _, gormMsg := range gormMsgList {
-						keyValueList := strings.SplitN(gormMsg, ":", 1)
+						keyValueList := strings.SplitN(gormMsg, ":", 2)
 						if keyValueList[0] == "comment" {
 							return keyValueList[1] + "不能为空"
 						}
