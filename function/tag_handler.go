@@ -87,30 +87,39 @@ func StructToFilterSlice(st any) []string {
 
 	relType := val.Type()
 	for i := 0; i < relType.NumField(); i++ {
-		name := relType.Field(i).Name
-		tag := relType.Field(i).Tag.Get("form")
-		filter := strings.ToUpper(relType.Field(i).Tag.Get("filter"))
+		// 判断值是否为空
 		if val.Field(i).IsZero() {
 			continue
 		}
 		value := val.Field(i).Interface()
-		if tag != "" {
-			index := strings.Index(tag, ",")
-			if index == -1 {
-				name = tag
-			} else {
-				name = tag[:index]
-			}
+		// 获取标签对应的字段名称
+		tag := relType.Field(i).Tag
+		name := tag.Get("field")
+		if name == "" {
+			name = relType.Field(i).Tag.Get("form")
 		}
-		switch filter {
+		if name == "" {
+			continue
+		}
+		index := strings.Index(name, ",")
+		if index != -1 {
+			name = name[:index]
+		}
+		// 获取筛选条件
+		filter := strings.ToUpper(tag.Get("filter"))
+		switch strings.ToUpper(filter) {
 		case "":
 			name += fmt.Sprintf(" = %v", value)
+		case "IN":
+			name += fmt.Sprintf(" IN (%v)", value.(string))
 		case "LIKE":
 			name += fmt.Sprintf(" LIKE '%%%v%%'", value)
 		case "LLIKE":
 			name += fmt.Sprintf(" LIKE '%%%v'", value)
 		case "RLIKE":
 			name += fmt.Sprintf(" LIKE '%v%%'", value)
+		case "-":
+			continue
 		default:
 			name += fmt.Sprintf(" %s %v", filter, value)
 		}
