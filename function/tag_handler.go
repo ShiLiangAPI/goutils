@@ -74,6 +74,57 @@ func GetStructMsg(err error, obj any) string {
 //	return ""
 //}
 
+// StructToSelectSlice 使用反射实现，完美地兼容了select标签的处理
+func StructToSelectSlice(obj any, defaultTable string) []string {
+	var s []string
+	val := reflect.ValueOf(obj)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+	if val.Kind() != reflect.Struct {
+		return s
+	}
+
+	relType := val.Type()
+	for i := 0; i < relType.NumField(); i++ {
+		// 嵌套结构体递归
+		if val.Field(i).Kind() == reflect.Struct {
+			s = append(s, StructToSelectSlice(val.Field(i).Interface(), defaultTable)...)
+			continue
+		}
+		// 获取标签对应的字段名称
+		tag := relType.Field(i).Tag
+		name := tag.Get("field")
+		json := tag.Get("json")
+		if strings.Index(json, "-") != -1 {
+			continue
+		}
+		jIndex := strings.Index(json, ",")
+		if jIndex != -1 {
+			json = json[:jIndex]
+		}
+		if name == "" {
+			name = json
+			if name == "" {
+				continue
+			}
+		} else {
+			index := strings.Index(name, ",")
+			if index != -1 {
+				name = name[:index]
+			}
+		}
+
+		table := tag.Get("table")
+		if table == "" {
+			table = defaultTable
+		}
+		name = table + "." + name + " AS " + json
+		s = append(s, name)
+	}
+	return s
+}
+
 // StructToFilterSlice 使用反射实现，完美地兼容了filter标签的处理
 func StructToFilterSlice(st any) []string {
 	var s []string
@@ -87,6 +138,11 @@ func StructToFilterSlice(st any) []string {
 
 	relType := val.Type()
 	for i := 0; i < relType.NumField(); i++ {
+		// 嵌套结构体递归
+		if val.Field(i).Kind() == reflect.Struct {
+			s = append(s, StructToFilterSlice(val.Field(i).Interface())...)
+			continue
+		}
 		// 判断值是否为空
 		if val.Field(i).IsZero() {
 			continue
@@ -105,6 +161,76 @@ func StructToFilterSlice(st any) []string {
 		if index != -1 {
 			name = name[:index]
 		}
+		table := tag.Get("table")
+		if table != "" {
+			name = table + "." + name
+		}
+
+		// 获取筛选条件
+		filter := strings.ToUpper(tag.Get("filter"))
+		switch strings.ToUpper(filter) {
+		case "":
+			name += fmt.Sprintf(" = %v", value)
+		case "IN":
+			name += fmt.Sprintf(" IN (%v)", value.(string))
+		case "LIKE":
+			name += fmt.Sprintf(" LIKE '%%%v%%'", value)
+		case "LLIKE":
+			name += fmt.Sprintf(" LIKE '%%%v'", value)
+		case "RLIKE":
+			name += fmt.Sprintf(" LIKE '%v%%'", value)
+		case "-":
+			continue
+		default:
+			name += fmt.Sprintf(" %s %v", filter, value)
+		}
+		s = append(s, name)
+	}
+	return s
+}
+
+// StructToRelationFilterSlice 使用反射实现，完美地兼容了filter标签的处理
+func StructToRelationFilterSlice(st any, defaultTable string) []string {
+	var s []string
+	val := reflect.ValueOf(st)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+	if val.Kind() != reflect.Struct {
+		return s
+	}
+
+	relType := val.Type()
+	for i := 0; i < relType.NumField(); i++ {
+		// 嵌套结构体递归
+		if val.Field(i).Kind() == reflect.Struct {
+			s = append(s, StructToRelationFilterSlice(val.Field(i).Interface(), defaultTable)...)
+			continue
+		}
+		// 判断值是否为空
+		if val.Field(i).IsZero() {
+			continue
+		}
+		value := val.Field(i).Interface()
+		// 获取标签对应的字段名称
+		tag := relType.Field(i).Tag
+		name := tag.Get("field")
+		if name == "" {
+			name = relType.Field(i).Tag.Get("form")
+		}
+		if name == "" {
+			continue
+		}
+		index := strings.Index(name, ",")
+		if index != -1 {
+			name = name[:index]
+		}
+		table := tag.Get("table")
+		if table == "" {
+			table = defaultTable
+		}
+		name = table + "." + name
+
 		// 获取筛选条件
 		filter := strings.ToUpper(tag.Get("filter"))
 		switch strings.ToUpper(filter) {

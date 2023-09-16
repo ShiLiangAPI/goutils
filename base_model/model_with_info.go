@@ -17,7 +17,7 @@ type BaseModelInfo struct {
 	Name      string                `gorm:"comment:'名称';not null" json:"name"`                                     // 名称
 	Code      string                `gorm:"comment:'编码';type:varchar(255);not null;uniqueIndex:udx_1" json:"code"` // 编码
 	IsEnabled bool                  `gorm:"comment:'是否启用';default:true" json:"is_enabled"`                         // 是否启用
-	Order     int                   `gorm:"comment:'排序'" json:"order"`                                             // 排序
+	Sort      int                   `gorm:"comment:'排序'" json:"sort"`                                              // 排序
 }
 
 func (obj *BaseModelInfo) BeforeCreate(tx *gorm.DB) (err error) {

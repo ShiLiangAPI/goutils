@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// StructToMap 使用反射实现，完美地兼容了json标签的处理
+// StructToMap 使用反射实现，完美地兼容了json标签的处理：修改参数处理
 func StructToMap(st any) map[string]interface{} {
 	m := make(map[string]interface{})
 	val := reflect.ValueOf(st)
@@ -16,21 +16,29 @@ func StructToMap(st any) map[string]interface{} {
 		return m
 	}
 
+	// 以下值忽略
+	ignore := NewSliceContains[string]([]string{"-", "created_at", "updated_at", "delete_at"})
+
 	relType := val.Type()
 	for i := 0; i < relType.NumField(); i++ {
-		name := relType.Field(i).Name
-		tag := relType.Field(i).Tag.Get("json")
-		if ValueInSlice[string]([]string{"-", "created_at", "updated_at", "delete_at"}, tag) {
+		// 嵌套结构体递归
+		if val.Field(i).Kind() == reflect.Struct {
+			mapVal := StructToMap(val.Field(i).Interface())
+			m = MapMerge[any](mapVal, m)
 			continue
 		}
+		name := relType.Field(i).Name
+		tag := relType.Field(i).Tag.Get("json")
+		var tagList []string
 		if tag != "" {
-			index := strings.Index(tag, ",")
-			if index == -1 {
-				name = tag
-			} else {
-				name = tag[:index]
-			}
+			tagList = strings.Split(tag, ",")
+			name = tagList[0]
 		}
+
+		if ignore.ContainsSlice(tagList) {
+			continue
+		}
+
 		if val.Field(i).IsZero() {
 			m[name] = nil
 		} else {
