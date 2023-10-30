@@ -17,7 +17,7 @@ func StructToMap(st any) map[string]interface{} {
 	}
 
 	// 以下值忽略
-	ignore := NewSliceContains[string]([]string{"-", "created_at", "updated_at", "delete_at"})
+	ignore := NewSliceContains[string]([]string{"-", "id", "created_at", "updated_at", "delete_at"})
 
 	relType := val.Type()
 	for i := 0; i < relType.NumField(); i++ {
