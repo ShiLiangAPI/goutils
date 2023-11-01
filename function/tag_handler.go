@@ -234,8 +234,12 @@ func StructToRelationFilterSlice(st any, defaultTable string) []string {
 		// 获取筛选条件
 		filter := strings.ToUpper(tag.Get("filter"))
 		switch strings.ToUpper(filter) {
-		case "":
-			name += fmt.Sprintf(" = %v", value)
+		case "", "=":
+			if value == "false" {
+				name = fmt.Sprintf("(%v = false OR %v is null)", name, name)
+			} else {
+				name += fmt.Sprintf(" = %v", value)
+			}
 		case "IN":
 			name += fmt.Sprintf(" IN (%v)", value.(string))
 		case "LIKE":
